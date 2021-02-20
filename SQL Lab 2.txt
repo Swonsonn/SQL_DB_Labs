@@ -1,0 +1,22 @@
+SELECT Number, BookCode, New, Title, Cost, Pages FROM base;
+SELECT * FROM base;
+SELECT BookCode, Title, New, Pages, Cost, Number FROM base;
+SELECT * FROM base LIMIT 10;
+SELECT DISTINCT BookCode FROM base;
+SELECT * FROM base WHERE New='Yes';
+SELECT * FROM base WHERE New='Yes' AND Cost>20 AND Cost<30;
+SELECT * FROM base WHERE New='Yes' AND Cost<20 OR Cost>30 AND New='Yes';
+SELECT * FROM base WHERE Pages>300 AND Pages<400 AND Cost>20 AND Cost<30;
+SELECT * FROM base WHERE ReleaseDate BETWEEN '2000-01-01' AND '2000-03-01';
+SELECT * FROM base WHERE BookCode IN(5110, 5141, 4985, 4241);
+SELECT * FROM base WHERE YEAR(ReleaseDate) IN(1999, 2001, 2003, 2005);
+SELECT * FROM base WHERE Title BETWEEN 'А%' AND 'К%';
+SELECT * FROM base WHERE Title LIKE 'АПП%' AND YEAR(ReleaseDate)>=2000 AND Cost<20;
+SELECT * FROM base WHERE Title LIKE 'АПП%' AND Title LIKE '%е' AND YEAR(ReleaseDate)=2000 AND MONTH(ReleaseDate) BETWEEN 1 AND 6;
+SELECT * FROM base WHERE Title LIKE '%Microsoft%' AND Title NOT LIKE '%Windows%';
+SELECT * FROM base WHERE Title REGEXP '[0-9]';
+SELECT * FROM base WHERE Title REGEXP '[0-9]{3}';
+SELECT * FROM base WHERE Title REGEXP '[0-9]{5}';
+
+
+
