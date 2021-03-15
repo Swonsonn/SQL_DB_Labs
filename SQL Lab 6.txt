@@ -1,0 +1,24 @@
+SELECT nbase_prim.Title, nbase_prim.Cost, nbase_prim.Producer, nbase_th.Theme FROM nbase_prim, nbase_th WHERE nbase_prim.BookCode=nbase_th.BC;
+SELECT nbase_prim.Title, nbase_th.Category FROM nbase_prim INNER JOIN nbase_th ON nbase_th.BC=nbase_prim.BookCode;
+SELECT Title, Cost, Producer, Format FROM nbase_prim;
+SELECT nbase_th.Theme, nbase_th.Category, nbase_prim.Title, nbase_prim.Producer FROM nbase_prim INNER JOIN nbase_th ON nbase_th.BC=nbase_prim.BookCode ORDER BY nbase_th.Theme ASC, nbase_th.Category ASC;
+SELECT nbase_prim.* , nbase_th.Theme, nbase_th.Category FROM nbase_prim INNER JOIN nbase_th ON nbase_th.BC=nbase_prim.BookCode WHERE nbase_prim.Producer LIKE '%BHV%' AND YEAR(nbase_prim.ReleaseDate)>=2001;
+SELECT nbase_th.Category, SUM(nbase_prim.Pages) FROM nbase_prim INNER JOIN nbase_th ON nbase_th.BC=nbase_prim.BookCode GROUP BY nbase_th.Category ORDER BY SUM(nbase_prim.Pages) DESC;
+SELECT AVG(nbase_prim.Cost) FROM nbase_prim INNER JOIN nbase_th ON nbase_th.BC=nbase_prim.BookCode AND nbase_th.Theme LIKE 'Використання ПК' AND nbase_th.Category LIKE 'Linux';
+SELECT nbase_prim.*, nbase_th.* FROM nbase_prim, nbase_th WHERE nbase_th.BC=nbase_prim.BookCode;
+SELECT nbase_prim.*, nbase_th.* FROM nbase_prim INNER JOIN nbase_th ON nbase_th.BC=nbase_prim.BookCode;
+SELECT nbase_prim.*, nbase_th.* FROM nbase_prim RIGHT JOIN nbase_th ON nbase_th.BC=nbase_prim.BookCode;
+SELECT a.Title, a.Pages, b.Title FROM nbase_prim AS a, nbase_prim AS b WHERE a.BookCode!=b.BookCode AND a.Pages=b.Pages;
+SELECT a.Title, b.Title, c.Title, a.Cost FROM nbase_prim AS a, nbase_prim AS b, nbase_prim AS c WHERE a.BookCode!=b.BookCode AND b.BookCode!=c.BookCode AND a.BookCode!=c.BookCode AND a.Cost=b.Cost AND b.Cost=c.Cost;
+SELECT nbase_prim.Title, nbase_th.Category FROM nbase_prim,nbase_th WHERE nbase_th.BC IN(SELECT BC FROM nbase_th WHERE Category LIKE '%C++%');
+SELECT Title, Producer, ReleaseDate FROM nbase_prim WHERE  BookCode IN(SELECT BookCode FROM nbase_prim WHERE YEAR(ReleaseDate)>=2001 AND Producer LIKE '%BHV%');
+SELECT * FROM nbase_prim WHERE EXISTS (SELECT * FROM nbase_prim WHERE Producer LIKE '%BHV%') AND Producer LIKE '%BHV%';
+SELECT * FROM nbase_prim WHERE NOT EXISTS (SELECT * FROM nbase_prim WHERE Producer LIKE '%BHV%') AND Producer NOT LIKE '%BHV%';
+
+(SELECT Theme, Category FROM nbase_th WHERE BC<=2600
+UNION SELECT Theme, Category FROM nbase_th WHERE BC>2600)
+ORDER BY Theme, Category;
+
+(SELECT DISTINCT SUBSTRING_INDEX(Title,' ',1) FROM nbase_prim
+ UNION
+SELECT DISTINCT SUBSTRING_INDEX(Theme,' ',1) FROM nbase_th)
