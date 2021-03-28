@@ -1,0 +1,71 @@
+CREATE PROCEDURE p1()
+SELECT nbase.Title, nbase.Cost, nbase_producer.Producer, nbase_format.Format FROM nbase, nbase_producer, nbase_format WHERE nbase.ID_Producer=nbase_producer.ID_Prod AND nbase_format.ID_Format=nbase.ID_Format;
+
+CALL p1();
+
+#######################################
+
+CREATE PROCEDURE p2(IN theme VARCHAR(30), IN categ VARCHAR(30))
+SELECT nbase_theme.Theme, nbase_category.Category, nbase.Title, nbase_producer.Producer FROM nbase, nbase_theme, nbase_producer, nbase_category WHERE nbase_theme.ID_Theme=nbase.ID_Theme AND nbase_producer.ID_Prod=nbase.ID_Producer AND nbase_category.ID_Category=nbase.ID_Category AND nbase_theme.Theme LIKE theme AND nbase_category.Category LIKE categ;
+
+CALL p2('%ПК%','Підручники');
+
+#######################################
+
+CREATE PROCEDURE p3()
+SELECT nbase.Title, nbase_producer.Producer, nbase.ReleaseDate FROM nbase, nbase_producer WHERE nbase_producer.ID_Prod=nbase.ID_Producer AND nbase_producer.Producer LIKE '%BHV%' AND YEAR(ReleaseDate)>2000;
+
+CALL p3();
+
+#######################################
+
+CREATE PROCEDURE p4()
+SELECT nbase_category.Category,SUM(nbase.Pages) FROM nbase, nbase_category WHERE nbase.ID_Category=nbase_category.ID_Category GROUP BY nbase_category.Category ORDER BY SUM(nbase.Pages);
+
+CALL p4();
+
+#######################################
+
+CREATE PROCEDURE p5(OUT avgprice SMALLINT)
+SELECT AVG(nbase.Cost) INTO avgprice FROM nbase_category, nbase_theme, nbase WHERE nbase.ID_Category=nbase_category.ID_Category AND nbase_theme.ID_Theme=nbase.ID_Theme AND nbase_theme.Theme LIKE '%ПК%' AND nbase_category.Category LIKE '%Linux%';
+
+CALL p5(@pr)
+SELECT @pr;
+
+#######################################
+
+CREATE PROCEDURE p6()
+SELECT nbase.*, nbase_producer.Producer, nbase_format.Format, nbase_theme.Theme, nbase_category.Category FROM nbase_theme,nbase_producer,nbase_format,nbase_category,nbase WHERE nbase_theme.ID_Theme=nbase.ID_Theme AND nbase_producer.ID_Prod=nbase.ID_Producer AND nbase_category.ID_Category=nbase.ID_Category AND nbase_format.ID_Format=nbase.ID_Format
+
+CALL p6();
+
+#######################################
+
+CREATE PROCEDURE p7()
+SELECT a.Title, a.Pages, b.Title FROM nbase AS a, nbase AS b WHERE a.BookCode!=b.BookCode AND a.Pages=b.Pages;
+
+CALL p7();
+
+#######################################
+
+CREATE PROCEDURE p8()
+SELECT a.Title, b.Title, c.Title, c.Cost FROM nbase AS a, nbase AS b, nbase AS c WHERE a.BookCode!=b.BookCode AND a.BookCode!=c.BookCode AND b.BookCode!=c.BookCode AND a.Cost=b.Cost AND a.Cost=c.Cost;
+
+CALL p8();
+
+#######################################
+
+CREATE PROCEDURE p9()
+SELECT nbase.Title, nbase_category.Category FROM nbase, nbase_category WHERE nbase.ID_Category=nbase_category.ID_Category AND nbase_category.Category LIKE '%C++%';
+
+CALL p9();
+
+#######################################
+
+CREATE PROCEDURE p10()
+SELECT nbase_producer.Producer FROM nbase_producer, nbase WHERE MIN(nbase.Pages)>=400 AND nbase.ID_Producer=nbase_producer.ID_Prod GROUP BY nbase_producer.Producer;
+
+CALL p10();
+
+#######################################
+
