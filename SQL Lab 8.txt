@@ -1,0 +1,98 @@
+DELIMITER $$
+CREATE TRIGGER tr1 BEFORE INSERT ON nbase_theme
+FOR EACH ROW
+BEGIN
+IF(SELECT COUNT(ID_Theme) FROM nbase_theme)>9
+THEN 
+SIGNAL SQLSTATE '45000' 
+SET MESSAGE_TEXT = 'Themes less than 10.';
+END IF;
+END $$
+
+####################################################
+
+DELIMITER $$
+CREATE TRIGGER tr2 AFTER INSERT ON nbase
+FOR EACH ROW BEGIN
+IF (YEAR(new.ReleaseDate)!=YEAR(CURRENT_DATE))
+THEN BEGIN
+	INSERT INTO nbase SET New='No';
+END; 
+END IF; 
+
+END $$
+
+####################################################
+
+DELIMITER $$
+CREATE TRIGGER tr3 AFTER INSERT ON nbase
+FOR EACH ROW
+BEGIN
+IF(NEW.Cost>NEW.Pages*10) THEN
+	INSERT INTO nbase SET Cost = Pages/10; 
+END IF;
+END $$
+
+####################################################
+
+DELIMITER $$
+CREATE TRIGGER tr4 AFTER INSERT ON nbase
+FOR EACH ROW
+BEGIN
+IF(NEW.ID_Producer=1, NEW.Produced<5000) THEN
+	DELETE FROM nbase;
+END IF;
+IF(NEW.ID_Producer=5, NEW.Produced<10000) THEN
+	DELETE FROM nbase;
+END IF;
+END $$
+
+####################################################
+
+ы)
+
+####################################################
+
+DELIMITER $$
+CREATE TRIGGER tr6 BEFORE DELETE ON nbase
+FOR EACH ROW
+BEGIN
+IF(CURRENT_USER!='dbo') THEN
+	SIGNAL SQLSTATE '45000' 
+	SET MESSAGE_TEXT = 'Non accepted user.';
+END IF;
+END $$
+
+####################################################
+
+DELIMITER $$
+CREATE TRIGGER tr7 BEFORE UPDATE ON nbase
+FOR EACH ROW
+BEGIN
+IF(CURRENT_USER='dbo', OLD.Cost!=NEW.Cost) THEN
+	SIGNAL SQLSTATE '45000' 
+	SET MESSAGE_TEXT = 'Non accepted user.';
+END IF;
+END $$
+
+####################################################
+
+DELIMITER $$
+CREATE TRIGGER tr8 AFTER INSERT ON nbase
+FOR EACH ROW
+BEGIN
+IF(NEW.ID_Producer=6 OR NEW.ID_Producer=8) THEN 
+DELETE FROM nbase;
+END IF;
+END $$
+
+####################################################
+
+DELIMITER $$
+CREATE TRIGGER tr9 AFTER INSERT ON nbase
+FOR EACH ROW
+BEGIN
+IF(NEW.ID_Producer=1, NEW.ID_Format=3) THEN
+DELETE FROM nbase;
+END IF;
+END $$
