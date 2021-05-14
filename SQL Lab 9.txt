@@ -1,0 +1,25 @@
+CREATE FUNCTION f1(y INT)
+RETURNS FLOAT
+RETURN (SELECT SUM(Cost) FROM nbase WHERE YEAR(ReleaseDate)=y);
+
+SELECT x(...);
+
+######################################
+
+DELIMITER $$
+CREATE PROCEDURE B(INOUT BookNameL VARCHAR(1000), IN yyear INT(4))
+BEGIN
+DECLARE done INT DEFAULT 0;
+DECLARE bookName VARCHAR(40);
+DECLARE curs CURSOR FOR SELECT Title FROM nbase WHERE YEAR(ReleaseDate)=yyear;
+DECLARE CONTINUE HANDLER FOR NOT FOUND SET done=1;
+OPEN curs;
+loopfunction: LOOP
+FETCH curs INTO bookName;
+IF done = 1 THEN LEAVE loopfunction;
+ELSE SET BookNameL=CONCAT(BookNameL,';',bookName);
+END IF;
+END LOOP loopfunction;
+CLOSE curs;
+
+END$$
