@@ -1,0 +1,164 @@
+БД учета оборудования организации (кафедра-помещение-материально ответственный-оборудование).
+
+CREATE DATABASE equipment_db;
+
+CREATE TABLE univ_dep(
+ID_Dep SMALLINT(3) NOT NULL UNIQUE,
+Dep VARCHAR(40) NOT NULL,
+PRIMARY KEY(ID_Dep)
+);
+
+CREATE TABLE univ_prof(
+ID_Prof SMALLINT(3) NOT NULL UNIQUE AUTO_INCREMENT,
+Name VARCHAR(25),
+Last_Name VARCHAR(25),
+ID_Dep SMALLINT(3) NOT NULL,
+PRIMARY KEY(ID_Prof),
+FOREIGN KEY (ID_Dep) REFERENCES univ_dep(ID_Dep)
+);
+
+CREATE TABLE univ_type(
+ID_Type SMALLINT(2) NOT NULL UNIQUE AUTO_INCREMENT,
+Type VARCHAR(25),
+PRIMARY KEY(ID_Type)
+);
+
+CREATE TABLE univ_eq(
+ID_Eq SMALLINT(3) NOT NULL UNIQUE AUTO_INCREMENT,
+ID_Type SMALLINT(2),
+Equipment VARCHAR(20),
+PRIMARY KEY(ID_Eq),
+FOREIGN KEY (ID_Type) REFERENCES univ_type(ID_Type)
+);
+
+CREATE TABLE univ_main(
+ID SMALLINT(3) NOT NULL AUTO_INCREMENT,
+ID_Prof SMALLINT(3),
+Room SMALLINT(3),
+ID_Eq SMALLINT(3),
+Num_of_eq SMALLINT(3) NOT NULL,
+PRIMARY KEY(ID),
+FOREIGN KEY (ID_Prof) REFERENCES univ_prof(ID_Prof),
+FOREIGN KEY (ID_Eq) REFERENCES univ_eq(ID_Eq)
+);
+
+INSERT INTO univ_dep(ID_Dep, Dep)
+VALUES
+(33, "Кафедра Польської Мови"),
+(45, "Кафедра Фізичної культури і Хімії"),
+(67, "Кафедра менеджменту часу"),
+(75, "Кафедра Бінгусології і Флопології"),
+(111, "Кафедра біології та математичних наук"),
+(125, "Кафедра прикладної філософії"),
+(167, "Кафедра кіберспорту"),
+(183, "Кафедра Японської культури");
+
+INSERT INTO univ_prof(Name, Last_Name, ID_Dep)
+VALUES
+("Людвик","Ковалик",183),
+("Францишек","Овчарек",33),
+("Конрад","Климек",45),
+("Эдита","Палух",67),
+("Сильвестер","Вальчак",75),
+("Габриэль","Шиманьский",111),
+("Луция","Гурская",111),
+("Юстина","Гловацкая",167),
+("Лукаш","Моравский",33),
+("Ежи","Качмарчик",45),
+("Малгожата","Янишевская",125),
+("Северин","Марциняк",167),
+("Милена","Зелиньская",67),
+("Станислав","Чайка",183),
+("Пётр","Овчарек",33),
+("Виктор","Добровольский",125),
+("Доминика","Малецкая",75),
+("Марек","Яблоньский",45),
+("Ядвига","Осиньская",33);
+
+INSERT INTO univ_type(Type)
+VALUES
+("Електричні прибори"),
+("Мебіль"),
+("Канцелярія"),
+("Хімія"),
+("Інструменти"),
+("Ліцензійні ключі");
+
+INSERT INTO univ_eq(ID_Type, Equipment)
+VALUES 
+(1,"Комп'ютер"),
+(1,"Проектор"),
+(1,"Набір Arduino"),
+(2,"Стілець"),
+(2,"Стіл"),
+(2,"Шкаф"),
+(3,"Крейда"),
+(1,"Інтерактивна дошка"),
+(3,"Бумага"),
+(3,"Ручки"),
+(1,"Кондиціонер"),
+(2,"Кафедрльний стіл"),
+(2,"Кабінет"),
+(2,"Лавочка"),
+(4,"Очищувач"),
+(1,"Модем"),
+(4,"Хлор"),
+(5,"Лопати"),
+(2,"Дошка"),
+(5,"Набір викруток"),
+(6,"Windows"),
+(6,"Visual Studio"),
+(6,"3DS Max");
+
+INSERT INTO univ_main(ID_Prof, Room, ID_Eq, Num_of_eq)
+VALUES
+(1,111,1,11),
+(1,124,23,11),
+(2,254,15,6),
+(2,125,12,23),
+(3,124,1,35),
+(3,145,2,8),
+(4,264,3,1),
+(4,131,4,6),
+(5,132,4,42),
+(5,132,7,12),
+(6,122,5,51),
+(6,233,14,41),
+(7,123,12,7),
+(7,231,18,12),
+(8,231,13,7),
+(8,148,12,9),
+(9,146,19,12),
+(9,124,22,21),
+(10,125,16,12),
+(10,114,7,6),
+(11,124,17,33),
+(11,124,12,57),
+(12,146,8,12),
+(12,124,3,6),
+(13,132,5,1),
+(13,214,7,2),
+(14,124,9,5),
+(14,124,11,2),
+(15,245,20,57),
+(15,214,12,12),
+(16,124,23,6),
+(16,231,2,8),
+(17,124,16,12),
+(17,126,13,7),
+(18,214,15,11),
+(18,123,3,24),
+(19,111,15,24),
+(19,111,4,22);
+
+CREATE PROCEDURE Show_All()
+SELECT univ_main.ID, univ_dep.Dep, univ_prof.Last_Name, univ_prof.Name, univ_main.Room, univ_type.Type, univ_eq.Equipment, univ_main.Num_of_eq FROM univ_main, univ_dep, univ_prof, univ_eq, univ_type WHERE univ_main.ID_Prof=univ_prof.ID_Prof AND univ_main.ID_Eq=univ_eq.ID_Eq AND univ_eq.ID_Type=univ_type.ID_Type AND univ_dep.ID_Dep=univ_prof.ID_Dep ORDER BY univ_main.ID;
+
+CREATE PROCEDURE Sum_Types()
+SELECT univ_type.Type, SUM(univ_main.Num_of_eq) FROM univ_type, univ_main, univ_eq WHERE univ_type.ID_Type=univ_eq.ID_Type AND univ_eq.ID_Eq=univ_main.ID_Eq GROUP BY univ_type.ID_Type;
+
+CREATE PROCEDURE Sum_Eq()
+SELECT univ_eq.Equipment, SUM(univ_main.Num_of_eq) FROM univ_main, univ_eq WHERE univ_main.ID_Eq=univ_eq.ID_Eq GROUP BY univ_main.ID_Eq;
+
+CREATE PROCEDURE Show_Sum_Eq_by_Dep(IN dep VARCHAR(40))
+SELECT univ_dep.Dep, univ_eq.Equipment, SUM(univ_main.Num_of_eq) FROM univ_dep, univ_eq, univ_main, univ_prof WHERE univ_prof.ID_Dep=univ_dep.ID_Dep AND univ_main.ID_Prof=univ_prof.ID_Prof AND univ_main.ID_Eq=univ_eq.ID_Eq AND univ_dep.Dep LIKE dep GROUP BY univ_main.ID_Eq; 
